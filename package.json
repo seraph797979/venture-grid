@@ -1,0 +1,36 @@
+{
+  "name": "venture-grid",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Venture-Grid：结构化远期猜想推演平台（单管理员，本地优先）",
+  "scripts": {
+    "serve": "bun run run.ts serve",
+    "check": "bun run typecheck && bun run ui:typecheck && bun test",
+    "typecheck": "bun x tsc --noEmit -p tsconfig.json",
+    "ui:dev": "bun x vite ui",
+    "ui:build": "bun x vite build ui",
+    "ui:typecheck": "bun x tsc --noEmit -p ui/tsconfig.json",
+    "test": "bun test tests",
+    "seed": "bun run run.ts seed-demo",
+    "run-weekly": "bun run run.ts run-weekly",
+    "docker": "docker compose up --build"
+  },
+  "dependencies": {
+    "@gobing-ai/ts-dual-workflow-engine": "0.4.66",
+    "@xyflow/react": "^12.4.0",
+    "fuse.js": "^7.0.0",
+    "marked": "^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "bun-types": "latest",
+    "typescript": "^5.8.3",
+    "vite": "^6.4.2"
+  }
+}

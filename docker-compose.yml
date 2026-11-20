@@ -1,0 +1,38 @@
+name: venture-grid
+
+services:
+  app:
+    build: .
+    image: venture-grid:local
+    ports:
+      - "${VG_PORT:-5277}:5277"
+    environment:
+      # 写操作闸门：必须显式配置，否则写接口一律 503
+      VG_ADMIN_TOKEN: ${VG_ADMIN_TOKEN:?Set VG_ADMIN_TOKEN in .env}
+      VG_INSTANCE_NAME: ${VG_INSTANCE_NAME:-docker}
+      # 访客提案：1=开放（默认），0=关闭
+      VG_PUBLIC_SUBMIT: ${VG_PUBLIC_SUBMIT:-1}
+      VG_PUBLIC_BASE_URL: ${VG_PUBLIC_BASE_URL:-http://127.0.0.1:5277}
+      # 提案审核结果邮件（确认/拒绝都发）
+      VG_EMAIL_PROVIDER: ${VG_EMAIL_PROVIDER:-}
+      VG_EMAIL_API_KEY: ${VG_EMAIL_API_KEY:-}
+      VG_EMAIL_FROM: ${VG_EMAIL_FROM:-}
+      VG_EMAIL_WEBHOOK_URL: ${VG_EMAIL_WEBHOOK_URL:-}
+      VG_EMAIL_WEBHOOK_TOKEN: ${VG_EMAIL_WEBHOOK_TOKEN:-}
+      # 大模型：未配置时证据摘要与周报会直接报错（无降级）
+      VG_LLM_PROVIDER: ${VG_LLM_PROVIDER:-deepseek}
+      VG_LLM_API_KEY: ${VG_LLM_API_KEY:-}
+      VG_LLM_BASE_URL: ${VG_LLM_BASE_URL:-}
+      VG_LLM_MODEL: ${VG_LLM_MODEL:-deepseek-v4.1-flash}
+      VG_LLM_TIMEOUT_MS: ${VG_LLM_TIMEOUT_MS:-60000}
+      # 可选：进程内每周定时（不设则关闭，推荐用外部 cron 调 run.ts run-weekly）
+      VG_WEEKLY_DAY: ${VG_WEEKLY_DAY:-}
+      VG_WEEKLY_AT: ${VG_WEEKLY_AT:-}
+      VG_DB_PATH: /data/vg.sqlite
+    volumes:
+      - vg-data:/data
+    restart: unless-stopped
+
+volumes:
+  vg-data:
+    name: ${VG_DATA_VOLUME:-venture-grid-data}

@@ -1,0 +1,16 @@
+node_modules/
+data/
+ui/dist/
+ui/node_modules/
+.env
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.env.*
+.gitee-token
+backups/
+
+.gt-token.txt
+.gh-token
+

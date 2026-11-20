@@ -1,0 +1,9 @@
+node_modules
+data
+ui/dist
+ui/node_modules
+tests
+.env
+.env.*
+*.log
+.git

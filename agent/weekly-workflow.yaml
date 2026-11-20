@@ -1,0 +1,46 @@
+# modules/venture-grid/agent/weekly-workflow.yaml
+#
+# 每周 agent 工作：collect（取本周事件）→ review（AI 审核访客提案并发邮件）
+#                → compose（大模型写综述）→ finalize（落库）
+#
+# 硬规则：
+#   - 周报任一步失败 → 整条 run 失败，批次标 failed，brief_content 留空
+#   - 提案审核为 best-effort：单条失败只记录，不阻塞周报
+#   - 没有大模型就不启动（调用方在 run 之前已用 resolveProvider 预检）
+kind: transition-flow
+name: vg-weekly-brief
+version: "1.2"
+description: Venture-Grid 每周简报：聚合事件 + AI 审核提案 + 模型综述 + 落库
+initialNode: review
+terminalNodes: [finalize]
+iterationBound: 10
+vars:
+  batch_id: ""
+nodes:
+  - id: review
+    type: action
+    description: AI 审核 pending 提案，采纳/拒绝并发邮件（失败不阻塞周报）
+    action:
+      kind: vg.weekly.review
+  - id: collect
+    type: action
+    description: 按批次区间聚合新增/涨跌/证据/关联四类事件（含刚采纳的提案）
+    action:
+      kind: vg.weekly.collect
+  - id: compose
+    type: action
+    description: 调用大模型生成本周综述叙述（失败即整条 run 失败）
+    action:
+      kind: vg.weekly.compose
+  - id: finalize
+    type: action
+    description: 合并确定性数据与综述，写入批次；失败则标 failed
+    action:
+      kind: vg.weekly.finalize
+edges:
+  - from: review
+    to: collect
+  - from: collect
+    to: compose
+  - from: compose
+    to: finalize
